@@ -79,6 +79,16 @@ app.launchEnvironment["BASE_URL"] = "http://localhost:\(port)"
 
 ```
 
+In addition to this, Apple's App Transport Security protections require you to add the following to your app's `Info.plist` to allow requests to `localhost`.
+
+``` xml
+<key>NSAppTransportSecurity</key>
+<dict>
+        <key>NSAllowsLocalNetworking</key>
+        <true/>
+</dict>
+```
+
 ### Switching between record / replay mode:
 
 The mode can be changed with the `isRecording`-setter. This should be called before the app is launched. Default value is `false`.

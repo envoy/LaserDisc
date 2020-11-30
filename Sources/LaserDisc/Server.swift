@@ -31,9 +31,9 @@ public final class Server {
     }
 
     @discardableResult
-    public func start() throws -> Int? {
+    public func start() throws -> Int {
         var server: DefaultHTTPServer?
-        var openPort: Int?
+        var openPort: Int = Int.max
         for port in (5000...6000).shuffled() {
             server = DefaultHTTPServer(eventLoop: loop, port: port, app: handleRequest)
             do {

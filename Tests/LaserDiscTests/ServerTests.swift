@@ -9,7 +9,7 @@ final class ServerTests: XCTestCase {
         server.isRecording = true
 
         let expectation = self.expectation(description: "request to succeed")
-        let request = URLRequest(url: URL(string: "http://localhost:\(port!)")!)
+        let request = URLRequest(url: URL(string: "http://localhost:\(port)")!)
         URLSession.shared.dataTask(with: request, completionHandler: { data, response, error in
             expectation.fulfill()
         }).resume()

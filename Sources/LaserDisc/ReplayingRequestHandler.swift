@@ -30,6 +30,10 @@ final class ReplayingRequestHandler: RequestHandler {
     func handle(request: URLRequest, sendStatus: @escaping StatusHandler, sendBody: @escaping BodyHandler) {
         guard var response = response(for: request) else {
             unrecordedRequestHandler?(request)
+            eventLoop.call {
+                sendStatus("404 Not Found", [:])
+                sendBody(Data())
+            }
             return
         }
 

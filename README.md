@@ -114,7 +114,7 @@ var failOnUnrecordedRequests = true
 override func setUp() {
     super.setUp()
 
-    server = Server(baseURL: URL(string: "https://app.envoy.com")!,
+    server = Server(baseURL: URL(string: "https://api.example.com")!,
                     recordingPath: laserDiscRecordingPath!,
                     unrecordedRequestHandler: handleUnrecordedRequest(_:))
 

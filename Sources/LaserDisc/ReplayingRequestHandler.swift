@@ -2,6 +2,7 @@ import Foundation
 import Embassy
 
 public typealias RequestMatcher = (_ entry: Entry, _ incomingRequest: URLRequest) -> Bool
+public typealias ResponseTransformer = (_ incomingRequest: URLRequest, _ data: Data?) -> Data?
 
 final class ReplayingRequestHandler: RequestHandler {
     private let eventLoop: EventLoop
@@ -9,6 +10,7 @@ final class ReplayingRequestHandler: RequestHandler {
     private let recordingPath: String
     private let unrecordedRequestHandler: ((URLRequest) -> Void)?
     private let matcher: RequestMatcher
+    private let transformer: ResponseTransformer?
     private let fileManager = FileManager()
 
     private lazy var recording: Recording = {
@@ -19,12 +21,14 @@ final class ReplayingRequestHandler: RequestHandler {
          baseURL: URL,
          recordingPath: String,
          unrecordedRequestHandler: ((URLRequest) -> Void)? = nil,
-         matcher: RequestMatcher?) {
+         matcher: RequestMatcher?,
+         transformer: ResponseTransformer?) {
         self.eventLoop = eventLoop
         self.baseURL = baseURL
         self.recordingPath = recordingPath
         self.unrecordedRequestHandler = unrecordedRequestHandler
         self.matcher = matcher ?? Self.approximateMatcher
+        self.transformer = transformer
     }
 
     func handle(request: URLRequest, sendStatus: @escaping StatusHandler, sendBody: @escaping BodyHandler) {
@@ -38,12 +42,15 @@ final class ReplayingRequestHandler: RequestHandler {
         }
 
         let textEncoding = String.Encoding(rawValue: response.bodyEncodingRaw)
-        let data = response.body.data(using: textEncoding)
+        var data = response.body.data(using: textEncoding)
+        if let transformer {
+            data = transformer(request, data)
+        }
         response.headers["Content-Length"] = "\(data?.count ?? 0)"
 
         eventLoop.call(withDelay: response.elapsedTime) {
             sendStatus(response.status, response.headers)
-            if let data = response.body.data(using: .utf8) {
+            if let data {
                 sendBody(data)
                 sendBody(Data())
             } else {

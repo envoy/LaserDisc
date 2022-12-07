@@ -21,12 +21,14 @@ public final class Server {
     public init(baseURL: URL,
                 recordingPath: String,
                 unrecordedRequestHandler: ((URLRequest) -> Void)? = nil,
-                requestMatcher: RequestMatcher? = nil) {
+                requestMatcher: RequestMatcher? = nil,
+                contentTransformer: ResponseTransformer? = nil) {
         replayingRequestHandler = ReplayingRequestHandler(eventLoop: loop,
                                                           baseURL: baseURL,
                                                           recordingPath: recordingPath,
                                                           unrecordedRequestHandler: unrecordedRequestHandler,
-                                                          matcher: requestMatcher)
+                                                          matcher: requestMatcher,
+                                                          transformer: contentTransformer)
         recordingRequestHandler = RecordingRequestHandler(eventLoop: loop, baseURL: baseURL, recordingPath: recordingPath)
     }
 

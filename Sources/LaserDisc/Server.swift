@@ -36,8 +36,9 @@ public final class Server {
     public func start() throws -> Int {
         var server: DefaultHTTPServer?
         var openPort: Int = Int.max
-        for port in (5000...6000).shuffled() {
+        for port in (6000...6100).shuffled() {
             server = DefaultHTTPServer(eventLoop: loop, port: port, app: handleRequest)
+            server?.logger.add(handler: PrintLogHandler())
             do {
                 try server?.start()
                 openPort = port

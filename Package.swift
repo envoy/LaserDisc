@@ -11,7 +11,7 @@ let package = Package(
             targets: ["LaserDisc"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/envoy/Embassy.git", from: "4.1.5"),
+        .package(url: "https://github.com/envoy/Embassy.git", from: "4.1.6"),
         .package(url: "https://github.com/envoy/Ambassador.git", from: "4.0.5")
     ],
     targets: [
